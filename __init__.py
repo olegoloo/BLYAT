@@ -1,10 +1,16 @@
 from typing import List, Optional
 
-__version__ = "23.2.1"
+import pip._internal.utils.inject_securetransport  # noqa
+from pip._internal.utils import _log
+
+# init_logging() must be called before any call to logging.getLogger()
+# which happens at import of most modules.
+_log.init_logging()
 
 
-def main(args: Optional[List[str]] = None) -> int:
-    """This is an internal API only meant for use by pip's own console scripts.
+def main(args: (Optional[List[str]]) = None) -> int:
+    """This is preserved for old console scripts that may still be referencing
+    it.
 
     For additional details, see https://github.com/pypa/pip/issues/7498.
     """
