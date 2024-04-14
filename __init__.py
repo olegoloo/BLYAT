@@ -1,177 +1,151 @@
-"""Rich text and beautiful formatting in the terminal."""
+# sqlalchemy/__init__.py
+# Copyright (C) 2005-2020 the SQLAlchemy authors and contributors
+# <see AUTHORS file>
+#
+# This module is part of SQLAlchemy and is released under
+# the MIT License: http://www.opensource.org/licenses/mit-license.php
 
-import os
-from typing import IO, TYPE_CHECKING, Any, Callable, Optional, Union
+from . import util as _util  # noqa
+from .inspection import inspect  # noqa
+from .schema import BLANK_SCHEMA  # noqa
+from .schema import CheckConstraint  # noqa
+from .schema import Column  # noqa
+from .schema import ColumnDefault  # noqa
+from .schema import Computed  # noqa
+from .schema import Constraint  # noqa
+from .schema import DDL  # noqa
+from .schema import DefaultClause  # noqa
+from .schema import FetchedValue  # noqa
+from .schema import ForeignKey  # noqa
+from .schema import ForeignKeyConstraint  # noqa
+from .schema import IdentityOptions  # noqa
+from .schema import Index  # noqa
+from .schema import MetaData  # noqa
+from .schema import PassiveDefault  # noqa
+from .schema import PrimaryKeyConstraint  # noqa
+from .schema import Sequence  # noqa
+from .schema import Table  # noqa
+from .schema import ThreadLocalMetaData  # noqa
+from .schema import UniqueConstraint  # noqa
+from .sql import alias  # noqa
+from .sql import all_  # noqa
+from .sql import and_  # noqa
+from .sql import any_  # noqa
+from .sql import asc  # noqa
+from .sql import between  # noqa
+from .sql import bindparam  # noqa
+from .sql import case  # noqa
+from .sql import cast  # noqa
+from .sql import collate  # noqa
+from .sql import column  # noqa
+from .sql import delete  # noqa
+from .sql import desc  # noqa
+from .sql import distinct  # noqa
+from .sql import except_  # noqa
+from .sql import except_all  # noqa
+from .sql import exists  # noqa
+from .sql import extract  # noqa
+from .sql import false  # noqa
+from .sql import func  # noqa
+from .sql import funcfilter  # noqa
+from .sql import insert  # noqa
+from .sql import intersect  # noqa
+from .sql import intersect_all  # noqa
+from .sql import join  # noqa
+from .sql import lateral  # noqa
+from .sql import literal  # noqa
+from .sql import literal_column  # noqa
+from .sql import modifier  # noqa
+from .sql import not_  # noqa
+from .sql import null  # noqa
+from .sql import nullsfirst  # noqa
+from .sql import nullslast  # noqa
+from .sql import or_  # noqa
+from .sql import outerjoin  # noqa
+from .sql import outparam  # noqa
+from .sql import over  # noqa
+from .sql import select  # noqa
+from .sql import subquery  # noqa
+from .sql import table  # noqa
+from .sql import tablesample  # noqa
+from .sql import text  # noqa
+from .sql import true  # noqa
+from .sql import tuple_  # noqa
+from .sql import type_coerce  # noqa
+from .sql import union  # noqa
+from .sql import union_all  # noqa
+from .sql import update  # noqa
+from .sql import within_group  # noqa
+from .types import ARRAY  # noqa
+from .types import BIGINT  # noqa
+from .types import BigInteger  # noqa
+from .types import BINARY  # noqa
+from .types import Binary  # noqa
+from .types import BLOB  # noqa
+from .types import BOOLEAN  # noqa
+from .types import Boolean  # noqa
+from .types import CHAR  # noqa
+from .types import CLOB  # noqa
+from .types import DATE  # noqa
+from .types import Date  # noqa
+from .types import DATETIME  # noqa
+from .types import DateTime  # noqa
+from .types import DECIMAL  # noqa
+from .types import Enum  # noqa
+from .types import FLOAT  # noqa
+from .types import Float  # noqa
+from .types import INT  # noqa
+from .types import INTEGER  # noqa
+from .types import Integer  # noqa
+from .types import Interval  # noqa
+from .types import JSON  # noqa
+from .types import LargeBinary  # noqa
+from .types import NCHAR  # noqa
+from .types import NUMERIC  # noqa
+from .types import Numeric  # noqa
+from .types import NVARCHAR  # noqa
+from .types import PickleType  # noqa
+from .types import REAL  # noqa
+from .types import SMALLINT  # noqa
+from .types import SmallInteger  # noqa
+from .types import String  # noqa
+from .types import TEXT  # noqa
+from .types import Text  # noqa
+from .types import TIME  # noqa
+from .types import Time  # noqa
+from .types import TIMESTAMP  # noqa
+from .types import TypeDecorator  # noqa
+from .types import Unicode  # noqa
+from .types import UnicodeText  # noqa
+from .types import VARBINARY  # noqa
+from .types import VARCHAR  # noqa
 
-from ._extension import load_ipython_extension  # noqa: F401
-
-__all__ = ["get_console", "reconfigure", "print", "inspect", "print_json"]
-
-if TYPE_CHECKING:
-    from .console import Console
-
-# Global console used by alternative print
-_console: Optional["Console"] = None
-
-try:
-    _IMPORT_CWD = os.path.abspath(os.getcwd())
-except FileNotFoundError:
-    # Can happen if the cwd has been deleted
-    _IMPORT_CWD = ""
+from .engine import create_engine  # noqa nosort
+from .engine import engine_from_config  # noqa nosort
 
 
-def get_console() -> "Console":
-    """Get a global :class:`~rich.console.Console` instance. This function is used when Rich requires a Console,
-    and hasn't been explicitly given one.
-
-    Returns:
-        Console: A console instance.
-    """
-    global _console
-    if _console is None:
-        from .console import Console
-
-        _console = Console()
-
-    return _console
+__version__ = "1.3.22"
 
 
-def reconfigure(*args: Any, **kwargs: Any) -> None:
-    """Reconfigures the global console by replacing it with another.
+def __go(lcls):
+    global __all__
 
-    Args:
-        *args (Any): Positional arguments for the replacement :class:`~rich.console.Console`.
-        **kwargs (Any): Keyword arguments for the replacement :class:`~rich.console.Console`.
-    """
-    from pip._vendor.rich.console import Console
+    from . import events  # noqa
+    from . import util as _sa_util
 
-    new_console = Console(*args, **kwargs)
-    _console = get_console()
-    _console.__dict__ = new_console.__dict__
+    import inspect as _inspect
 
-
-def print(
-    *objects: Any,
-    sep: str = " ",
-    end: str = "\n",
-    file: Optional[IO[str]] = None,
-    flush: bool = False,
-) -> None:
-    r"""Print object(s) supplied via positional arguments.
-    This function has an identical signature to the built-in print.
-    For more advanced features, see the :class:`~rich.console.Console` class.
-
-    Args:
-        sep (str, optional): Separator between printed objects. Defaults to " ".
-        end (str, optional): Character to write at end of output. Defaults to "\\n".
-        file (IO[str], optional): File to write to, or None for stdout. Defaults to None.
-        flush (bool, optional): Has no effect as Rich always flushes output. Defaults to False.
-
-    """
-    from .console import Console
-
-    write_console = get_console() if file is None else Console(file=file)
-    return write_console.print(*objects, sep=sep, end=end)
-
-
-def print_json(
-    json: Optional[str] = None,
-    *,
-    data: Any = None,
-    indent: Union[None, int, str] = 2,
-    highlight: bool = True,
-    skip_keys: bool = False,
-    ensure_ascii: bool = False,
-    check_circular: bool = True,
-    allow_nan: bool = True,
-    default: Optional[Callable[[Any], Any]] = None,
-    sort_keys: bool = False,
-) -> None:
-    """Pretty prints JSON. Output will be valid JSON.
-
-    Args:
-        json (str): A string containing JSON.
-        data (Any): If json is not supplied, then encode this data.
-        indent (int, optional): Number of spaces to indent. Defaults to 2.
-        highlight (bool, optional): Enable highlighting of output: Defaults to True.
-        skip_keys (bool, optional): Skip keys not of a basic type. Defaults to False.
-        ensure_ascii (bool, optional): Escape all non-ascii characters. Defaults to False.
-        check_circular (bool, optional): Check for circular references. Defaults to True.
-        allow_nan (bool, optional): Allow NaN and Infinity values. Defaults to True.
-        default (Callable, optional): A callable that converts values that can not be encoded
-            in to something that can be JSON encoded. Defaults to None.
-        sort_keys (bool, optional): Sort dictionary keys. Defaults to False.
-    """
-
-    get_console().print_json(
-        json,
-        data=data,
-        indent=indent,
-        highlight=highlight,
-        skip_keys=skip_keys,
-        ensure_ascii=ensure_ascii,
-        check_circular=check_circular,
-        allow_nan=allow_nan,
-        default=default,
-        sort_keys=sort_keys,
+    __all__ = sorted(
+        name
+        for name, obj in lcls.items()
+        if not (name.startswith("_") or _inspect.ismodule(obj))
     )
 
+    _sa_util.dependencies.resolve_all("sqlalchemy")
 
-def inspect(
-    obj: Any,
-    *,
-    console: Optional["Console"] = None,
-    title: Optional[str] = None,
-    help: bool = False,
-    methods: bool = False,
-    docs: bool = True,
-    private: bool = False,
-    dunder: bool = False,
-    sort: bool = True,
-    all: bool = False,
-    value: bool = True,
-) -> None:
-    """Inspect any Python object.
+    from . import exc
 
-    * inspect(<OBJECT>) to see summarized info.
-    * inspect(<OBJECT>, methods=True) to see methods.
-    * inspect(<OBJECT>, help=True) to see full (non-abbreviated) help.
-    * inspect(<OBJECT>, private=True) to see private attributes (single underscore).
-    * inspect(<OBJECT>, dunder=True) to see attributes beginning with double underscore.
-    * inspect(<OBJECT>, all=True) to see all attributes.
-
-    Args:
-        obj (Any): An object to inspect.
-        title (str, optional): Title to display over inspect result, or None use type. Defaults to None.
-        help (bool, optional): Show full help text rather than just first paragraph. Defaults to False.
-        methods (bool, optional): Enable inspection of callables. Defaults to False.
-        docs (bool, optional): Also render doc strings. Defaults to True.
-        private (bool, optional): Show private attributes (beginning with underscore). Defaults to False.
-        dunder (bool, optional): Show attributes starting with double underscore. Defaults to False.
-        sort (bool, optional): Sort attributes alphabetically. Defaults to True.
-        all (bool, optional): Show all attributes. Defaults to False.
-        value (bool, optional): Pretty print value. Defaults to True.
-    """
-    _console = console or get_console()
-    from pip._vendor.rich._inspect import Inspect
-
-    # Special case for inspect(inspect)
-    is_inspect = obj is inspect
-
-    _inspect = Inspect(
-        obj,
-        title=title,
-        help=is_inspect or help,
-        methods=is_inspect or methods,
-        docs=is_inspect or docs,
-        private=private,
-        dunder=dunder,
-        sort=sort,
-        all=all,
-        value=value,
-    )
-    _console.print(_inspect)
+    exc._version_token = "".join(__version__.split(".")[0:2])
 
 
-if __name__ == "__main__":  # pragma: no cover
-    print("Hello, **World**")
+__go(locals())
