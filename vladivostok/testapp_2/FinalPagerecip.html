@@ -1,0 +1,24 @@
+{{ block title }}
+    Результат группы
+{{ endblock }}
+
+{% block content %}
+<div class="card" style="width: 60rem;">
+    <div class="card-header">
+    {{ group.results_recip }}
+    </div>
+        <ul class="list-group list-group-flush">
+        <li class="list-group-item"> Суммарные пожертвования всех доноров составили {{ group.sum_offer }}₽. {{group.ost}} </li>
+        </ul>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"> Ваш баланс в конце этого раунда: {{ group.set_payoff_recip }}₽ </li>
+        </ul>
+</div>
+
+
+<br>
+Чтобы перейти в следующий раунд, нажмите "Далее".
+<br>
+<br>
+{{ next_button }}
+{{ endblock }}
